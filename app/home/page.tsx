@@ -36,7 +36,6 @@ export default function HomePage() {
     allergies: [],
   });
 
-  // edit mode + drafts
   const [isEditing, setIsEditing] = useState(false);
   const [draftName, setDraftName] = useState(profile.name);
 
@@ -46,7 +45,6 @@ export default function HomePage() {
   const [prefInput, setPrefInput] = useState("");
   const [allergyInput, setAllergyInput] = useState("");
 
-  // load from localStorage on first render (prototype persistence)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -61,16 +59,13 @@ export default function HomePage() {
           allergies: Array.isArray(parsed.allergies) ? parsed.allergies : [],
         });
       } else {
-        // optional: support register flow that stores name only
         const nameOnly = localStorage.getItem("registered_name");
         if (nameOnly) setProfile((p) => ({ ...p, name: nameOnly }));
       }
     } catch {
-      // ignore storage errors
     }
   }, []);
 
-  // when entering edit mode, copy saved -> drafts
   useEffect(() => {
     if (!isEditing) return;
     setDraftName(profile.name);
@@ -114,7 +109,7 @@ export default function HomePage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch {
-      // ignore
+
     }
   };
 
