@@ -52,3 +52,79 @@ a:hover {
   flex: 1;
   padding: 2rem;
 }
+
+
+/*meal layout*/
+
+.meals-container {
+  display: flex;
+  gap: 4rem;
+  margin-top: 2rem;
+}
+
+.meals-filters {
+  width: 220px;
+}
+
+.meals-filters label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.meals-filters select {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+
+.meals-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.meal-card {
+  background: #d9d9d9;
+  border-radius: 16px;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.meal-card h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.meal-badges {
+  display: flex;
+  gap: 1rem;
+}
+
+.badge {
+  background: #f2f2f2;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+}
+
+.match-indicator {
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+.match-perfect {
+  color: #2e7d32;
+}
+
+.match-good {
+  color: #b58900;
+}
+
+.match-low {
+  color: #c62828;
+}
