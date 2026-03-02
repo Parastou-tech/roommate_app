@@ -1,6 +1,6 @@
 # Roommate App Prototype
 
-This is a Next.js prototype for PrePair Roommate App.
+This is a Next.js prototype for Prep Pair Roommate App.
 
 ## Prototype Pages
 
