@@ -2,11 +2,10 @@
 
 import { ReactNode } from "react";
 import BrandLogo from "./BrandLogo";
-import Sidebar from "./Sidebar";
 
-export default function DashboardPage({ title, children }: { title: string; children?: ReactNode }) {
+export default function AuthPageShell({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="app-shell">
+    <main className="auth-shell">
       <header className="app-header">
         <div className="header-brand">
           <BrandLogo />
@@ -14,10 +13,7 @@ export default function DashboardPage({ title, children }: { title: string; chil
         <h1>{title}</h1>
         <div className="header-spacer" aria-hidden />
       </header>
-      <div className="app-body">
-        <Sidebar />
-        <main className="main-panel">{children}</main>
-      </div>
-    </div>
+      <section className="auth-content">{children}</section>
+    </main>
   );
 }

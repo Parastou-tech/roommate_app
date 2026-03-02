@@ -1,13 +1,59 @@
-import Link from "next/link";
+"use client";
+
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import AuthPageShell from "@/components/AuthPageShell";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
+    setError("");
+    router.push("/home");
+  }
+
   return (
-    <main className="page">
-      <h1>Register</h1>
-      <div className="links">
-        <Link href="/login">Already have an account? Login</Link>
-        <Link href="/home">Continue to Home</Link>
-      </div>
-    </main>
+    <AuthPageShell title="Registration">
+      <form className="auth-form" onSubmit={submit}>
+        <label htmlFor="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          autoComplete="username"
+        />
+
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          autoComplete="new-password"
+        />
+
+        <button type="submit" className="auth-primary">
+          Register
+        </button>
+
+        {error ? <p className="auth-error">{error}</p> : null}
+
+        <p className="auth-alt">Already have an account?</p>
+        <button type="button" className="auth-link" onClick={() => router.push("/login")}>
+          ★ Log in
+        </button>
+      </form>
+    </AuthPageShell>
   );
 }

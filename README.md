@@ -1,8 +1,8 @@
-# roommate_app
+# Roommate App Prototype
 
-Minimal Next.js scaffold for navigation-only roommate app pages.
+This is a Next.js prototype for PrePair Roommate App.
 
-## Pages
+## Prototype Pages
 
 - `/register`
 - `/login`
@@ -12,13 +12,20 @@ Minimal Next.js scaffold for navigation-only roommate app pages.
 - `/chores`
 - `/collab`
 
-`/home`, `/meals`, `/inventory`, `/chores`, and `/collab` share the same left sidebar menu with links to all five pages.
+## Instructions To Run The Prototype
 
-## Run
-
-Install dependencies and start dev server:
+From the repository root:
 
 ```bash
+cd roommate_app
 npm install
 npm run dev
 ```
+
+Then open `http://localhost:3000` in your browser.
+
+## Team Contributions
+
+Parastou A: brand guideline + chores page + collab page + login/register pages + tasks  
+Babaldeep Thiara: home page + inventory page + tasks  
+Aaron Lee: meal page + tasks

@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Roommate App",
-  description: "Navigation scaffold"
+  title: "Prep Pair",
+  description: "Roommate collaboration app"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
