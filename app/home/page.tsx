@@ -1,197 +1,160 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DashboardPage from "@/components/DashboardPage";
+
+function load<T>(key: string, fallback: T): T {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export default function HomePage() {
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState("Bobby Milk");
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(["Asian", "Mexican"]);
-  const [selectedAllergies, setSelectedAllergies] = useState<string[]>(["Peanuts", "Shellfish"]);
-  const [preferenceOptions, setPreferenceOptions] = useState<string[]>([
-    "Asian",
-    "Mexican",
-    "Italian",
-    "Mediterranean"
-  ]);
-  const [allergyOptions, setAllergyOptions] = useState<string[]>(["Peanuts", "Shellfish", "Dairy", "Gluten"]);
+  const [name, setName] = useState(() => load("pp_name", "Bobby Milk"));
+  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(() => load("pp_prefs_selected", ["Asian", "Mexican"]));
+  const [selectedAllergies, setSelectedAllergies] = useState<string[]>(() => load("pp_allergies_selected", ["Peanuts", "Shellfish"]));
+  const [preferenceOptions, setPreferenceOptions] = useState<string[]>(() => load("pp_prefs_options", ["Asian", "Mexican", "Italian", "Mediterranean"]));
+  const [allergyOptions, setAllergyOptions] = useState<string[]>(() => load("pp_allergies_options", ["Peanuts", "Shellfish", "Dairy", "Gluten"]));
   const [newPreference, setNewPreference] = useState("");
   const [newAllergy, setNewAllergy] = useState("");
+  const [lastDeleted, setLastDeleted] = useState<{ type: "preference" | "allergy"; value: string } | null>(null);
 
-  const displayPreferences = useMemo(
-    () => Array.from(new Set([...preferenceOptions, ...selectedPreferences])),
-    [preferenceOptions, selectedPreferences]
-  );
+  useEffect(() => { localStorage.setItem("pp_name", JSON.stringify(name)); }, [name]);
+  useEffect(() => { localStorage.setItem("pp_prefs_selected", JSON.stringify(selectedPreferences)); }, [selectedPreferences]);
+  useEffect(() => { localStorage.setItem("pp_allergies_selected", JSON.stringify(selectedAllergies)); }, [selectedAllergies]);
+  useEffect(() => { localStorage.setItem("pp_prefs_options", JSON.stringify(preferenceOptions)); }, [preferenceOptions]);
+  useEffect(() => { localStorage.setItem("pp_allergies_options", JSON.stringify(allergyOptions)); }, [allergyOptions]);
 
-  const displayAllergies = useMemo(
-    () => Array.from(new Set([...allergyOptions, ...selectedAllergies])),
-    [allergyOptions, selectedAllergies]
-  );
+  const displayPreferences = useMemo(() => Array.from(new Set([...preferenceOptions, ...selectedPreferences])), [preferenceOptions, selectedPreferences]);
+  const displayAllergies = useMemo(() => Array.from(new Set([...allergyOptions, ...selectedAllergies])), [allergyOptions, selectedAllergies]);
 
   function getUpdatedTags(items: string[], value: string) {
     return items.includes(value) ? items.filter((item) => item !== value) : [...items, value];
   }
 
   function removePreference(value: string) {
-    setPreferenceOptions((current) => current.filter((item) => item !== value));
-    setSelectedPreferences((current) => current.filter((item) => item !== value));
+    setPreferenceOptions((c) => c.filter((i) => i !== value));
+    setSelectedPreferences((c) => c.filter((i) => i !== value));
+    setLastDeleted({ type: "preference", value });
   }
 
   function removeAllergy(value: string) {
-    setAllergyOptions((current) => current.filter((item) => item !== value));
-    setSelectedAllergies((current) => current.filter((item) => item !== value));
+    setAllergyOptions((c) => c.filter((i) => i !== value));
+    setSelectedAllergies((c) => c.filter((i) => i !== value));
+    setLastDeleted({ type: "allergy", value });
+  }
+
+  function undoDelete() {
+    if (!lastDeleted) return;
+    if (lastDeleted.type === "preference") {
+      setPreferenceOptions((c) => [...c, lastDeleted.value]);
+      setSelectedPreferences((c) => [...c, lastDeleted.value]);
+    } else {
+      setAllergyOptions((c) => [...c, lastDeleted.value]);
+      setSelectedAllergies((c) => [...c, lastDeleted.value]);
+    }
+    setLastDeleted(null);
   }
 
   function addPreference() {
     const value = newPreference.trim();
-    if (!value) {
-      return;
-    }
-
-    if (!displayPreferences.includes(value)) {
-      setPreferenceOptions((current) => [...current, value]);
-    }
-
-    setSelectedPreferences((current) => (current.includes(value) ? current : [...current, value]));
+    if (!value) return;
+    if (!displayPreferences.includes(value)) setPreferenceOptions((c) => [...c, value]);
+    setSelectedPreferences((c) => c.includes(value) ? c : [...c, value]);
     setNewPreference("");
   }
 
   function addAllergy() {
     const value = newAllergy.trim();
-    if (!value) {
-      return;
-    }
-
-    if (!displayAllergies.includes(value)) {
-      setAllergyOptions((current) => [...current, value]);
-    }
-
-    setSelectedAllergies((current) => (current.includes(value) ? current : [...current, value]));
+    if (!value) return;
+    if (!displayAllergies.includes(value)) setAllergyOptions((c) => [...c, value]);
+    setSelectedAllergies((c) => c.includes(value) ? c : [...c, value]);
     setNewAllergy("");
   }
 
+  const initials = name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+
   return (
     <DashboardPage title="Home">
-      <section className="panel">
-        <div className="profile-row">
-          <div className="profile-info">
-            <div className="avatar-dot" aria-hidden>
-              BM
+      <section className="panel" style={{ marginBottom: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "linear-gradient(135deg, #186fc3, #4aa3e8)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 700, fontSize: "1.2rem", flexShrink: 0, boxShadow: "0 2px 8px rgba(24,111,195,0.3)" }}>
+              {initials}
             </div>
             <div>
               {editing ? (
-                <input
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  className="profile-name-input"
-                  aria-label="Display name"
-                />
+                <input value={name} onChange={(e) => setName(e.target.value)} className="profile-name-input" aria-label="Display name" style={{ fontSize: "1.1rem", fontWeight: 700 }} />
               ) : (
-                <div className="profile-name">{name}</div>
+                <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#186fc3" }}>{name}</div>
               )}
-              <div className="profile-role">Student</div>
+              {!editing && <div style={{ fontSize: "0.75rem", color: "#aaa", marginTop: "2px" }}>Click Edit to update your name</div>}
+              <div style={{ display: "inline-block", marginTop: "4px", fontSize: "0.75rem", fontWeight: 600, background: "rgba(24,111,195,0.1)", color: "#186fc3", borderRadius: "20px", padding: "2px 10px" }}>Student</div>
             </div>
           </div>
-          <button
-            type="button"
-            className={`profile-edit ${editing ? "active" : ""}`}
-            onClick={() => setEditing((value) => !value)}
-          >
+          <button type="button" className={`profile-edit ${editing ? "active" : ""}`} onClick={() => setEditing((v) => !v)}>
             {editing ? "Done" : "Edit"}
           </button>
         </div>
+      </section>
 
-        <h2 className="section-title">Food Preferences</h2>
+      {lastDeleted && (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "0 0 0.75rem 0", padding: "0.4rem 0.75rem", background: "rgba(24, 111, 195, 0.1)", border: "1px solid rgba(24, 111, 195, 0.3)", borderRadius: "8px", fontSize: "0.85rem", color: "#155999" }}>
+          <span>"{lastDeleted.value}" removed.</span>
+          <button type="button" onClick={undoDelete} style={{ fontWeight: 600, textDecoration: "underline", background: "none", border: "none", color: "#155999", cursor: "pointer" }}>Undo</button>
+        </div>
+      )}
+
+      <section className="panel" style={{ marginBottom: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+          <h2 className="section-title" style={{ margin: 0 }}>🍜 Food Preferences</h2>
+          <span style={{ fontSize: "0.8rem", color: "#aaa" }}>{selectedPreferences.length} selected</span>
+        </div>
         <div className="pill-row">
           {displayPreferences.map((option) => {
             const active = selectedPreferences.includes(option);
             return (
               <div key={option} className={`pill-chip ${active ? "active" : ""} ${editing ? "" : "locked"}`}>
-                <button
-                  type="button"
-                  className="pill-label-btn"
-                  onClick={() => editing && setSelectedPreferences(getUpdatedTags(selectedPreferences, option))}
-                >
-                  {option}
-                </button>
-                <button
-                  type="button"
-                  className="pill-delete-btn"
-                  aria-label={`Delete ${option}`}
-                  onClick={() => removePreference(option)}
-                >
-                  ×
-                </button>
+                <button type="button" className="pill-label-btn" onClick={() => editing && setSelectedPreferences(getUpdatedTags(selectedPreferences, option))}>{option}</button>
+                {editing && <button type="button" className="pill-delete-btn" aria-label={`Delete ${option}`} onClick={() => removePreference(option)}>×</button>}
               </div>
             );
           })}
-          {editing ? (
-            <button type="button" className="profile-edit section-add-btn" onClick={addPreference}>
-              Add
-            </button>
-          ) : null}
         </div>
-        {editing ? (
-          <div className="section-add-row">
-            <input
-              value={newPreference}
-              onChange={(event) => setNewPreference(event.target.value)}
-              placeholder="Add food preference"
-              aria-label="Add food preference"
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  addPreference();
-                }
-              }}
-            />
+        {editing && (
+          <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
+            <input value={newPreference} onChange={(e) => setNewPreference(e.target.value)} placeholder="Add food preference" style={{ flex: 1 }} onKeyDown={(e) => { if (e.key === "Enter") addPreference(); }} />
+            <button type="button" className="profile-edit" onClick={addPreference}>+ Add</button>
           </div>
-        ) : null}
+        )}
+      </section>
 
-        <h2 className="section-title">Allergies</h2>
+      <section className="panel" style={{ marginBottom: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+          <h2 className="section-title" style={{ margin: 0 }}>⚠️ Allergies</h2>
+          <span style={{ fontSize: "0.8rem", color: "#aaa" }}>{selectedAllergies.length} selected</span>
+        </div>
         <div className="pill-row">
           {displayAllergies.map((option) => {
             const active = selectedAllergies.includes(option);
             return (
               <div key={option} className={`pill-chip ${active ? "active" : ""} ${editing ? "" : "locked"}`}>
-                <button
-                  type="button"
-                  className="pill-label-btn"
-                  onClick={() => editing && setSelectedAllergies(getUpdatedTags(selectedAllergies, option))}
-                >
-                  {option}
-                </button>
-                <button
-                  type="button"
-                  className="pill-delete-btn"
-                  aria-label={`Delete ${option}`}
-                  onClick={() => removeAllergy(option)}
-                >
-                  ×
-                </button>
+                <button type="button" className="pill-label-btn" onClick={() => editing && setSelectedAllergies(getUpdatedTags(selectedAllergies, option))}>{option}</button>
+                {editing && <button type="button" className="pill-delete-btn" aria-label={`Delete ${option}`} onClick={() => removeAllergy(option)}>×</button>}
               </div>
             );
           })}
-          {editing ? (
-            <button type="button" className="profile-edit section-add-btn" onClick={addAllergy}>
-              Add
-            </button>
-          ) : null}
         </div>
-        {editing ? (
-          <div className="section-add-row">
-            <input
-              value={newAllergy}
-              onChange={(event) => setNewAllergy(event.target.value)}
-              placeholder="Add allergy"
-              aria-label="Add allergy"
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  addAllergy();
-                }
-              }}
-            />
+        {editing && (
+          <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
+            <input value={newAllergy} onChange={(e) => setNewAllergy(e.target.value)} placeholder="Add allergy" style={{ flex: 1 }} onKeyDown={(e) => { if (e.key === "Enter") addAllergy(); }} />
+            <button type="button" className="profile-edit" onClick={addAllergy}>+ Add</button>
           </div>
-        ) : null}
+        )}
       </section>
     </DashboardPage>
   );
