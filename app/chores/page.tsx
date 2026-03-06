@@ -41,7 +41,7 @@ export default function ChoresPage() {
   const [lastToggled, setLastToggled] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  // Only load from localStorage after mount to avoid hydration mismatch
+  
   useEffect(() => {
     try {
       const savedChores = localStorage.getItem("pp_chores");
@@ -105,7 +105,7 @@ export default function ChoresPage() {
   const lastToggledChore = chores.find((c) => c.id === lastToggled);
   const confirmDeleteChore = chores.find((c) => c.id === confirmDeleteId);
 
-  // Don't render dynamic content until mounted to avoid hydration mismatch
+  
   if (!mounted) return null;
 
   return (
