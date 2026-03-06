@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardPage from "@/components/DashboardPage";
 
-type StockLevel = "out" | "low" | "in";
+type StockLevel = "out of stock" | "low stock" | "in stock";
 type Category = "Produce" | "Dairy" | "Pantry" | "Proteins";
 
 type InventoryItem = {

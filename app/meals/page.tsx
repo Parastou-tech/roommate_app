@@ -203,6 +203,10 @@ export default function MealsPage() {
               </article>
             );
           })}
+
+          <p style={{ margin: "0.9rem 0 0", fontSize: "0.95rem", color: "#5f6f80", textAlign: "center" }}>
+            {visibleMeals.length} out of {meals.length} meals shown
+          </p>
         </section>
       </div>
 
