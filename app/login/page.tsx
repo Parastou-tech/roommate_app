@@ -49,7 +49,6 @@ export default function LoginPage() {
 
         {error ? <p className="auth-error">{error}</p> : null}
 
-        <p className="auth-alt">Don&apos;t have an account?</p>
         <button type="button" className="auth-link" onClick={() => router.push("/register")}>
           ★ Register
         </button>

@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
         {error ? <p className="auth-error">{error}</p> : null}
 
-        <p className="auth-alt">Already have an account?</p>
+        
         <button type="button" className="auth-link" onClick={() => router.push("/login")}>
           ★ Log in
         </button>
