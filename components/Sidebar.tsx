@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuLinks = [
-  { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/meals", label: "Meals", icon: "♨️" },
-  { href: "/inventory", label: "Inventory", icon: "⌛" },
-  { href: "/chores", label: "Chores", icon: "🪣" },
-  { href: "/collab", label: "Collab", icon: "✏️" }
+  { href: "/home", label: "Home", icon: "🏠" },
+  { href: "/meals", label: "Meals", icon: "🍽️" },
+  { href: "/inventory", label: "Inventory", icon: "🛒" },
+  { href: "/chores", label: "Chores", icon: "🧹" },
+  { href: "/collab", label: "Collab", icon: "👥" }
 ];
 
 export default function Sidebar() {

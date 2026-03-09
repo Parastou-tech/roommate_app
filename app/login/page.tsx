@@ -43,8 +43,9 @@ export default function LoginPage() {
           autoComplete="current-password"
         />
 
+      
         <button type="submit" className="auth-primary">
-          LOGIN
+          Login
         </button>
 
         {error ? <p className="auth-error">{error}</p> : null}
