@@ -1189,13 +1189,164 @@ select {
 }
 
 .member-card {
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid rgba(24, 111, 195, 0.3);
   background: rgba(250, 252, 240, 0.78);
-  padding: 0.8rem 1rem;
-  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
-  font-family: var(--font-comfortaa), sans-serif;
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.member-card-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.member-card-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.member-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6c757d, #adb5bd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.member-avatar.is-you {
+  background: linear-gradient(135deg, #186fc3, #4aa3e8);
+}
+
+.member-name-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--prep-blue);
+  line-height: 1.1;
+}
+
+.member-you-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(24, 111, 195, 0.22);
+  background: rgba(196, 217, 237, 0.44);
   color: var(--prep-blue-deep);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  white-space: nowrap;
+}
+
+.member-role-line {
+  margin-top: 0.14rem;
+  font-size: 0.78rem;
+  color: #8d98a4;
+}
+
+.member-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.member-expand-btn {
+  border: 1px solid rgba(24, 111, 195, 0.25);
+  border-radius: 12px;
+  padding: 0.34rem 0.7rem;
+  background: rgba(196, 217, 237, 0.28);
+  color: var(--prep-blue-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.member-remove-btn {
+  border: 1px solid #c0392b;
+  border-radius: 12px;
+  padding: 0.34rem 0.7rem;
+  background: transparent;
+  color: #c0392b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.member-dietary-row {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.member-dietary-summary {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #4e6476;
+}
+
+.member-dietary-panel {
+  margin-top: 0.58rem;
+  padding-top: 0.58rem;
+  border-top: 1px solid rgba(24, 111, 195, 0.16);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.member-dietary-section h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(21, 89, 153, 0.8);
+}
+
+.member-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.member-chip {
+  border: 1px solid rgba(64, 71, 36, 0.26);
+  border-radius: 999px;
+  padding: 0.22rem 0.6rem;
+  background: rgba(226, 228, 172, 0.82);
+  color: var(--prep-forest);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.member-chip.allergy {
+  border-color: rgba(166, 32, 28, 0.22);
+  background: rgba(219, 67, 62, 0.12);
+  color: #8d1f1c;
+}
+
+.member-chip.empty {
+  border-color: rgba(150, 175, 195, 0.38);
+  background: rgba(250, 252, 240, 0.9);
+  color: #6b7280;
+  font-style: italic;
 }
 
 .add-user-row {
@@ -1206,6 +1357,11 @@ select {
   align-items: center;
 }
 
+.add-user-search {
+  position: relative;
+  min-width: 0;
+}
+
 .add-user-row input {
   border: 1px solid rgba(24, 111, 195, 0.24);
   border-radius: 12px;
@@ -1213,6 +1369,7 @@ select {
   font-size: 1rem;
   color: var(--prep-blue-deep);
   background: rgba(250, 252, 240, 0.96);
+  width: 100%;
 }
 
 .add-user-row select {
@@ -1224,7 +1381,7 @@ select {
   background: rgba(250, 252, 240, 0.96);
 }
 
-.add-user-row button {
+.add-user-row > button {
   border: 1px solid rgba(24, 111, 195, 0.24);
   border-radius: 12px;
   padding: 0.6rem 1.05rem;
@@ -1235,6 +1392,67 @@ select {
   color: var(--prep-blue-deep);
   font-weight: 700;
   cursor: pointer;
+}
+
+.add-user-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 20;
+  border: 1px solid rgba(24, 111, 195, 0.26);
+  border-radius: 12px;
+  background: rgba(250, 252, 240, 0.98);
+  box-shadow: 0 14px 26px -20px rgba(25, 58, 96, 0.6);
+  display: flex;
+  flex-direction: column;
+  max-height: 210px;
+  overflow: auto;
+}
+
+.add-user-result-btn {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgba(24, 111, 195, 0.14);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.52rem 0.66rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.add-user-result-btn:last-child {
+  border-bottom: 0;
+}
+
+.add-user-result-btn:hover {
+  background: rgba(196, 217, 237, 0.25);
+}
+
+.add-user-result-username {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--prep-blue-deep);
+}
+
+.add-user-result-name {
+  font-size: 0.82rem;
+  color: #4e6476;
+}
+
+.add-user-feedback {
+  grid-column: 1 / -1;
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  color: #4e6476;
+}
+
+.add-user-feedback.error {
+  color: #9b2924;
 }
 
 .auth-content {
@@ -1412,6 +1630,24 @@ select {
   }
 
   .add-user-row {
+    grid-template-columns: 1fr;
+  }
+
+  .member-card-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .member-card-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .member-dietary-row {
+    flex-wrap: wrap;
+  }
+
+  .member-dietary-panel {
     grid-template-columns: 1fr;
   }
 
