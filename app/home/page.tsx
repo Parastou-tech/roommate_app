@@ -3,6 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardPage from "@/components/DashboardPage";
 
+const DEFAULT_NAME = "Bobby Milk";
+const DEFAULT_SELECTED_PREFERENCES = ["Asian", "Mexican"];
+const DEFAULT_SELECTED_ALLERGIES = ["Peanuts", "Shellfish"];
+const DEFAULT_PREFERENCE_OPTIONS = ["Asian", "Mexican", "Italian", "Mediterranean"];
+const DEFAULT_ALLERGY_OPTIONS = ["Peanuts", "Shellfish", "Dairy", "Gluten"];
+
 function load<T>(key: string, fallback: T): T {
   try {
     const stored = localStorage.getItem(key);
@@ -13,21 +19,31 @@ function load<T>(key: string, fallback: T): T {
 }
 
 export default function HomePage() {
+  const [hydrated, setHydrated] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(() => load("pp_name", "Bobby Milk"));
-  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(() => load("pp_prefs_selected", ["Asian", "Mexican"]));
-  const [selectedAllergies, setSelectedAllergies] = useState<string[]>(() => load("pp_allergies_selected", ["Peanuts", "Shellfish"]));
-  const [preferenceOptions, setPreferenceOptions] = useState<string[]>(() => load("pp_prefs_options", ["Asian", "Mexican", "Italian", "Mediterranean"]));
-  const [allergyOptions, setAllergyOptions] = useState<string[]>(() => load("pp_allergies_options", ["Peanuts", "Shellfish", "Dairy", "Gluten"]));
+  const [name, setName] = useState(DEFAULT_NAME);
+  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(DEFAULT_SELECTED_PREFERENCES);
+  const [selectedAllergies, setSelectedAllergies] = useState<string[]>(DEFAULT_SELECTED_ALLERGIES);
+  const [preferenceOptions, setPreferenceOptions] = useState<string[]>(DEFAULT_PREFERENCE_OPTIONS);
+  const [allergyOptions, setAllergyOptions] = useState<string[]>(DEFAULT_ALLERGY_OPTIONS);
   const [newPreference, setNewPreference] = useState("");
   const [newAllergy, setNewAllergy] = useState("");
   const [lastDeleted, setLastDeleted] = useState<{ type: "preference" | "allergy"; value: string } | null>(null);
 
-  useEffect(() => { localStorage.setItem("pp_name", JSON.stringify(name)); }, [name]);
-  useEffect(() => { localStorage.setItem("pp_prefs_selected", JSON.stringify(selectedPreferences)); }, [selectedPreferences]);
-  useEffect(() => { localStorage.setItem("pp_allergies_selected", JSON.stringify(selectedAllergies)); }, [selectedAllergies]);
-  useEffect(() => { localStorage.setItem("pp_prefs_options", JSON.stringify(preferenceOptions)); }, [preferenceOptions]);
-  useEffect(() => { localStorage.setItem("pp_allergies_options", JSON.stringify(allergyOptions)); }, [allergyOptions]);
+  useEffect(() => {
+    setName(load("pp_name", DEFAULT_NAME));
+    setSelectedPreferences(load("pp_prefs_selected", DEFAULT_SELECTED_PREFERENCES));
+    setSelectedAllergies(load("pp_allergies_selected", DEFAULT_SELECTED_ALLERGIES));
+    setPreferenceOptions(load("pp_prefs_options", DEFAULT_PREFERENCE_OPTIONS));
+    setAllergyOptions(load("pp_allergies_options", DEFAULT_ALLERGY_OPTIONS));
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => { if (hydrated) localStorage.setItem("pp_name", JSON.stringify(name)); }, [name, hydrated]);
+  useEffect(() => { if (hydrated) localStorage.setItem("pp_prefs_selected", JSON.stringify(selectedPreferences)); }, [selectedPreferences, hydrated]);
+  useEffect(() => { if (hydrated) localStorage.setItem("pp_allergies_selected", JSON.stringify(selectedAllergies)); }, [selectedAllergies, hydrated]);
+  useEffect(() => { if (hydrated) localStorage.setItem("pp_prefs_options", JSON.stringify(preferenceOptions)); }, [preferenceOptions, hydrated]);
+  useEffect(() => { if (hydrated) localStorage.setItem("pp_allergies_options", JSON.stringify(allergyOptions)); }, [allergyOptions, hydrated]);
 
   const displayPreferences = useMemo(() => Array.from(new Set([...preferenceOptions, ...selectedPreferences])), [preferenceOptions, selectedPreferences]);
   const displayAllergies = useMemo(() => Array.from(new Set([...allergyOptions, ...selectedAllergies])), [allergyOptions, selectedAllergies]);

@@ -224,7 +224,7 @@ export default function ChoresPage() {
                 <strong>{formatLabel(chore.turn)}</strong>
               </span>
               <span className="chore-meta-pill prev">
-                <span className="pill-label">Prev</span>
+                <span className="pill-label">Previous</span>
                 <strong>{formatLabel(chore.prev)}</strong>
               </span>
             </div>

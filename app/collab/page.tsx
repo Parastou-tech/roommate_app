@@ -25,12 +25,22 @@ function load<T>(key: string, fallback: T): T {
 }
 
 export default function CollabPage() {
-  const [members, setMembers] = useState<Member[]>(() => load("pp_members", DEFAULT_MEMBERS));
+  const [hydrated, setHydrated] = useState(false);
+  const [members, setMembers] = useState<Member[]>(DEFAULT_MEMBERS);
   const [newMember, setNewMember] = useState("");
   const [newRole, setNewRole] = useState("Student");
   const [confirmRemove, setConfirmRemove] = useState<Member | null>(null);
 
-  useEffect(() => { localStorage.setItem("pp_members", JSON.stringify(members)); }, [members]);
+  useEffect(() => {
+    const storedMembers = load<Member[]>("pp_members", DEFAULT_MEMBERS);
+    setMembers(storedMembers);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem("pp_members", JSON.stringify(members));
+  }, [members, hydrated]);
 
   function addMember() {
     if (!newMember.trim()) return;

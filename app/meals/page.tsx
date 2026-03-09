@@ -55,9 +55,10 @@ function normalizeMeal(meal: StoredMeal): Meal {
 }
 
 export default function MealsPage() {
-  const [meals, setMeals] = useState<Meal[]>(() => load<StoredMeal[]>("pp_meals", DEFAULT_MEALS).map(normalizeMeal));
-  const [members, setMembers] = useState<Member[]>(() => load("pp_members", []));
-  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(() => load("pp_inventory", []));
+  const [hydrated, setHydrated] = useState(false);
+  const [meals, setMeals] = useState<Meal[]>(DEFAULT_MEALS);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [sortBy, setSortBy] = useState<"match" | "feeds" | "minutes">("match");
   const [selectedCompanions, setSelectedCompanions] = useState<string[]>([]);
   const [confirmRemoveMeal, setConfirmRemoveMeal] = useState<Meal | null>(null);
@@ -71,13 +72,19 @@ export default function MealsPage() {
 
   // Sync members from localStorage
   useEffect(() => {
+    const storedMeals = load<StoredMeal[]>("pp_meals", DEFAULT_MEALS).map(normalizeMeal);
+    setMeals(storedMeals);
     const synced = load<Member[]>("pp_members", []);
     setMembers(synced);
     const syncedInventory = load<InventoryItem[]>("pp_inventory", []);
     setInventoryItems(syncedInventory);
+    setHydrated(true);
   }, []);
 
-  useEffect(() => { localStorage.setItem("pp_meals", JSON.stringify(meals)); }, [meals]);
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem("pp_meals", JSON.stringify(meals));
+  }, [meals, hydrated]);
 
   const companionOptions = members.map((m) => m.name);
 
