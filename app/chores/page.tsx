@@ -177,7 +177,7 @@ export default function ChoresPage() {
             </select>
           </label>
           <label className="chore-select-field">
-            Prev
+            Previous
             <select value={newPrev} onChange={(e) => {
               const selected = e.target.value;
               setNewPrev(selected);

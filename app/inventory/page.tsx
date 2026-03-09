@@ -14,24 +14,42 @@ type InventoryItem = {
   done: boolean;
 };
 
+type StoredInventoryItem = Omit<InventoryItem, "stock"> & { stock: string };
+
 const categories: Category[] = ["Produce", "Dairy", "Pantry", "Proteins"];
 
-const stockLabels: Record<string, string> = {
-  out: "Out of stock",
-  low: "Low stock",
-  in: "In stock"
+const stockLabels: Record<StockLevel, string> = {
+  "out of stock": "Out of stock",
+  "low stock": "Low stock",
+  "in stock": "In stock"
 };
 
 const DEFAULT_ITEMS: InventoryItem[] = [
-  { id: "1", name: "Lettuce", category: "Produce", stock: "low", done: false },
-  { id: "2", name: "Bell Peppers", category: "Produce", stock: "in", done: false },
-  { id: "3", name: "Milk", category: "Dairy", stock: "out", done: false },
-  { id: "4", name: "Eggs", category: "Dairy", stock: "low", done: false },
-  { id: "5", name: "Rice", category: "Pantry", stock: "in", done: false },
-  { id: "6", name: "Olive Oil", category: "Pantry", stock: "out", done: false },
-  { id: "7", name: "Chicken", category: "Proteins", stock: "low", done: false },
-  { id: "8", name: "Black Beans", category: "Proteins", stock: "in", done: false }
+  { id: "1", name: "Lettuce", category: "Produce", stock: "low stock", done: false },
+  { id: "2", name: "Bell Peppers", category: "Produce", stock: "in stock", done: false },
+  { id: "3", name: "Milk", category: "Dairy", stock: "out of stock", done: false },
+  { id: "4", name: "Eggs", category: "Dairy", stock: "low stock", done: false },
+  { id: "5", name: "Rice", category: "Pantry", stock: "in stock", done: false },
+  { id: "6", name: "Olive Oil", category: "Pantry", stock: "out of stock", done: false },
+  { id: "7", name: "Chicken", category: "Proteins", stock: "low stock", done: false },
+  { id: "8", name: "Black Beans", category: "Proteins", stock: "in stock", done: false }
 ];
+
+function normalizeStock(value: string): StockLevel {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "out of stock" || normalized === "low stock" || normalized === "in stock") return normalized;
+  return "in stock";
+}
+
+function normalizeItem(item: StoredInventoryItem): InventoryItem {
+  return { ...item, stock: normalizeStock(item.stock) };
+}
+
+function stockToneClass(stock: StockLevel) {
+  if (stock === "out of stock") return "tone-red";
+  if (stock === "low stock") return "tone-orange";
+  return "tone-black";
+}
 
 function load<T>(key: string, fallback: T): T {
   try {
@@ -43,19 +61,30 @@ function load<T>(key: string, fallback: T): T {
 }
 
 export default function InventoryPage() {
-  const [items, setItems] = useState<InventoryItem[]>(() => load("pp_inventory", DEFAULT_ITEMS));
+  const [mounted, setMounted] = useState(false);
+  const [items, setItems] = useState<InventoryItem[]>(DEFAULT_ITEMS);
   const [newItem, setNewItem] = useState("");
   const [newCategory, setNewCategory] = useState<Category>("Pantry");
-  const [newStock, setNewStock] = useState<StockLevel>("in");
+  const [newStock, setNewStock] = useState<StockLevel>("in stock");
   const [stockFilter, setStockFilter] = useState<"all" | StockLevel>("all");
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const [modalStock, setModalStock] = useState<StockLevel>("in");
+  const [modalStock, setModalStock] = useState<StockLevel>("in stock");
   const [modalName, setModalName] = useState("");
   const [modalCategory, setModalCategory] = useState<Category>("Pantry");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [quickRemoveId, setQuickRemoveId] = useState<string | null>(null);
 
-  useEffect(() => { localStorage.setItem("pp_inventory", JSON.stringify(items)); }, [items]);
+  // Load local storage only after mount so server/client initial HTML stays identical.
+  useEffect(() => {
+    const storedItems = load<StoredInventoryItem[]>("pp_inventory", DEFAULT_ITEMS).map(normalizeItem);
+    setItems(storedItems);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    localStorage.setItem("pp_inventory", JSON.stringify(items));
+  }, [items, mounted]);
 
   function toggleDone(id: string) {
     setItems((current) => current.map((item) => item.id !== id ? item : { ...item, done: !item.done }));
@@ -75,7 +104,7 @@ export default function InventoryPage() {
 
   function openItemModal(item: InventoryItem) {
     setActiveItemId(item.id);
-    setModalStock(item.stock);
+    setModalStock(normalizeStock(item.stock));
     setModalName(item.name);
     setModalCategory(item.category);
     setConfirmDelete(false);
@@ -127,15 +156,15 @@ export default function InventoryPage() {
           <label htmlFor="stock-filter">Filter by stock level</label>
           <select id="stock-filter" value={stockFilter} onChange={(e) => setStockFilter(e.target.value as "all" | StockLevel)}>
             <option value="all">All</option>
-            <option value="out">Out of stock</option>
-            <option value="low">Low stock</option>
-            <option value="in">In stock</option>
+            <option value="out of stock">Out of stock</option>
+            <option value="low stock">Low stock</option>
+            <option value="in stock">In stock</option>
           </select>
         </div>
 
         {stockFilter !== "all" && (
           <p style={{ margin: "0.5rem 0 0.75rem 0", padding: "0.4rem 0.75rem", background: "rgba(24, 111, 195, 0.1)", border: "1px solid rgba(24, 111, 195, 0.3)", borderRadius: "8px", fontSize: "0.85rem", color: "#155999" }}>
-            Showing only: <strong>{stockLabels[stockFilter]}</strong> items
+            Showing only: <strong>{stockFilter === "all" ? "All" : stockLabels[stockFilter]}</strong> items
           </p>
         )}
 
@@ -147,7 +176,7 @@ export default function InventoryPage() {
                 {visibleByCategory[category].map((item) => (
                   <li key={item.id} className={`inventory-item ${item.done ? "done" : ""}`}>
                     <button type="button" className="inventory-item-btn" onClick={() => toggleDone(item.id)}>
-                      <span className={`inventory-item-name ${item.stock === "out" ? "tone-red" : item.stock === "low" ? "tone-orange" : "tone-black"}`}>
+                      <span className={`inventory-item-name ${stockToneClass(item.stock)}`}>
                         {item.name}
                       </span>
                     </button>
@@ -168,9 +197,9 @@ export default function InventoryPage() {
             {categories.map((c) => (<option key={c} value={c}>{c}</option>))}
           </select>
           <select value={newStock} onChange={(e) => setNewStock(e.target.value as StockLevel)}>
-            <option value="out">Out</option>
-            <option value="low">Low</option>
-            <option value="in">In</option>
+            <option value="out of stock">Out of stock</option>
+            <option value="low stock">Low stock</option>
+            <option value="in stock">In stock</option>
           </select>
           <button type="button" onClick={addItem}>+ Add Item</button>
         </div>
@@ -180,7 +209,7 @@ export default function InventoryPage() {
         <div className="modal-overlay" onClick={() => setQuickRemoveId(null)}>
           <div className="item-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <h3>Remove Item</h3>
-            <p style={{ margin: "0.75rem 0" }}>Are you sure you want to remove <strong>{quickRemoveItem.name}</strong>?</p>
+            <p style={{ margin: "0.75rem 0", color: "#2a6fa8" }}>Are you sure you want to remove <strong>{quickRemoveItem.name}</strong>?</p>
             <div className="item-modal-actions">
               <button type="button" className="modal-btn" onClick={() => setQuickRemoveId(null)}>Cancel</button>
               <button type="button" className="modal-btn delete" onClick={() => removeItem(quickRemoveItem.id)}>Yes, Remove</button>
@@ -195,7 +224,7 @@ export default function InventoryPage() {
             <h3>Edit Item</h3>
             {confirmDelete ? (
               <>
-                <p style={{ color: "#c0392b", marginBottom: "1rem" }}>Are you sure you want to delete "{activeItem.name}"?</p>
+                <p style={{ color: "#c0392b", marginBottom: "1rem" }}>Are you sure you want to delete {activeItem.name}?</p>
                 <div className="item-modal-actions">
                   <button type="button" className="modal-btn" onClick={() => setConfirmDelete(false)}>Cancel</button>
                   <button type="button" className="modal-btn delete" onClick={deleteActiveItem}>Yes, Delete</button>
@@ -211,9 +240,9 @@ export default function InventoryPage() {
                 </select>
                 <label htmlFor="item-status" style={{ fontSize: "0.85rem", marginBottom: "0.25rem", display: "block" }}>Stock Status</label>
                 <select id="item-status" value={modalStock} onChange={(e) => setModalStock(e.target.value as StockLevel)} style={{ width: "100%", marginBottom: "0.75rem" }}>
-                  <option value="out">Out of stock</option>
-                  <option value="low">Low stock</option>
-                  <option value="in">In stock</option>
+                  <option value="out of stock">Out of stock</option>
+                  <option value="low stock">Low stock</option>
+                  <option value="in stock">In stock</option>
                 </select>
                 <div className="item-modal-actions">
                   <button type="button" className="modal-btn delete" onClick={() => setConfirmDelete(true)}>Delete</button>

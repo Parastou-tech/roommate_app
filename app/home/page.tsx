@@ -90,9 +90,8 @@ export default function HomePage() {
               {editing ? (
                 <input value={name} onChange={(e) => setName(e.target.value)} className="profile-name-input" aria-label="Display name" style={{ fontSize: "1.1rem", fontWeight: 700 }} />
               ) : (
-                <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#186fc3" }}>{name}</div>
+                <div style={{ fontSize: "2.1rem", fontWeight: 700, color: "#186fc3" }}>{name}</div>
               )}
-              {!editing && <div style={{ fontSize: "0.75rem", color: "#aaa", marginTop: "2px" }}>Click Edit to update your name</div>}
               <div style={{ display: "inline-block", marginTop: "4px", fontSize: "0.75rem", fontWeight: 600, background: "rgba(24,111,195,0.1)", color: "#186fc3", borderRadius: "20px", padding: "2px 10px" }}>Student</div>
             </div>
           </div>
@@ -104,7 +103,7 @@ export default function HomePage() {
 
       {lastDeleted && (
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "0 0 0.75rem 0", padding: "0.4rem 0.75rem", background: "rgba(24, 111, 195, 0.1)", border: "1px solid rgba(24, 111, 195, 0.3)", borderRadius: "8px", fontSize: "0.85rem", color: "#155999" }}>
-          <span>"{lastDeleted.value}" removed.</span>
+          <span>{lastDeleted.value} removed.</span>
           <button type="button" onClick={undoDelete} style={{ fontWeight: 600, textDecoration: "underline", background: "none", border: "none", color: "#155999", cursor: "pointer" }}>Undo</button>
         </div>
       )}
@@ -126,8 +125,8 @@ export default function HomePage() {
           })}
         </div>
         {editing && (
-          <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
-            <input value={newPreference} onChange={(e) => setNewPreference(e.target.value)} placeholder="Add food preference" style={{ flex: 1 }} onKeyDown={(e) => { if (e.key === "Enter") addPreference(); }} />
+          <div className="home-add-row">
+            <input className="home-add-input" value={newPreference} onChange={(e) => setNewPreference(e.target.value)} placeholder="Add food preference" onKeyDown={(e) => { if (e.key === "Enter") addPreference(); }} />
             <button type="button" className="profile-edit" onClick={addPreference}>+ Add</button>
           </div>
         )}
@@ -150,8 +149,8 @@ export default function HomePage() {
           })}
         </div>
         {editing && (
-          <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
-            <input value={newAllergy} onChange={(e) => setNewAllergy(e.target.value)} placeholder="Add allergy" style={{ flex: 1 }} onKeyDown={(e) => { if (e.key === "Enter") addAllergy(); }} />
+          <div className="home-add-row">
+            <input className="home-add-input" value={newAllergy} onChange={(e) => setNewAllergy(e.target.value)} placeholder="Add allergy" onKeyDown={(e) => { if (e.key === "Enter") addAllergy(); }} />
             <button type="button" className="profile-edit" onClick={addAllergy}>+ Add</button>
           </div>
         )}

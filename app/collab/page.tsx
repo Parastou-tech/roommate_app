@@ -82,14 +82,14 @@ export default function CollabPage() {
           ))}
         </div>
 
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.75rem", width: "100%", boxSizing: "border-box" }}>
-          <input value={newMember} onChange={(e) => setNewMember(e.target.value)} placeholder="Add user" aria-label="Add user" style={{ flex: 1, minWidth: 0 }} onKeyDown={(e) => { if (e.key === "Enter") addMember(); }} />
-          <select value={newRole} onChange={(e) => setNewRole(e.target.value)} style={{ fontSize: "0.85rem", flexShrink: 0 }}>
+        <div className="add-user-row">
+          <input value={newMember} onChange={(e) => setNewMember(e.target.value)} placeholder="Add user" aria-label="Add user" onKeyDown={(e) => { if (e.key === "Enter") addMember(); }} />
+          <select value={newRole} onChange={(e) => setNewRole(e.target.value)} aria-label="Occupation">
             <option value="Student">Student</option>
             <option value="Roommate">Roommate</option>
             <option value="Guest">Guest</option>
           </select>
-          <button type="button" onClick={addMember} style={{ fontSize: "0.85rem", whiteSpace: "nowrap", flexShrink: 0 }}>+ Add Member</button>
+          <button type="button" onClick={addMember}>+ Add Member</button>
         </div>
       </section>
 
@@ -97,7 +97,7 @@ export default function CollabPage() {
         <div className="modal-overlay" onClick={() => setConfirmRemove(null)}>
           <div className="item-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <h3>Remove Member</h3>
-            <p style={{ margin: "0.75rem 0" }}>Are you sure you want to remove <strong>{confirmRemove.name}</strong> from your group?</p>
+            <p style={{ margin: "0.75rem 0", color: "#2a6fa8" }}>Are you sure you want to remove <strong>{confirmRemove.name}</strong> from your group?</p>
             <div className="item-modal-actions">
               <button type="button" className="modal-btn" onClick={() => setConfirmRemove(null)}>Cancel</button>
               <button type="button" className="modal-btn delete" onClick={() => removeMember(confirmRemove.id)}>Yes, Remove</button>
