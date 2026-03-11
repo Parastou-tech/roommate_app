@@ -69,6 +69,7 @@ export default function MealsPage() {
   const [newMealIngredients, setNewMealIngredients] = useState<string[]>([]);
   const [newIngredient, setNewIngredient] = useState("");
   const [showAddMeal, setShowAddMeal] = useState(false);
+  const [expandedMeals, setExpandedMeals] = useState<Record<string, boolean>>({});
 
   // Sync members from localStorage
   useEffect(() => {
@@ -144,7 +145,16 @@ export default function MealsPage() {
 
   function removeMeal(id: string) {
     setMeals((current) => current.filter((m) => m.id !== id));
+    setExpandedMeals((current) => {
+      const updated = { ...current };
+      delete updated[id];
+      return updated;
+    });
     setConfirmRemoveMeal(null);
+  }
+
+  function toggleMealIngredients(id: string) {
+    setExpandedMeals((current) => ({ ...current, [id]: !current[id] }));
   }
 
   const inventoryIngredientOptions = useMemo(() =>
@@ -199,7 +209,7 @@ export default function MealsPage() {
           </select>
 
           <p className="filter-label">Meal Companions</p>
-          <p className="filter-hint">Pick one or multiple</p>
+          <p className="filter-hint">Select who you want to have a meal with:</p>
           <div className="radio-stack">
             {companionOptions.map((name) => (
               <label key={name}>
@@ -209,7 +219,7 @@ export default function MealsPage() {
             ))}
           </div>
           <p style={{ fontSize: "0.8rem", color: "#888", marginTop: "0.5rem" }}>
-            ℹ️ Add or remove companions from the Collab page.
+            ℹ️ Add or delete companions from the Collab page.
           </p>
         </aside>
 
@@ -308,15 +318,38 @@ export default function MealsPage() {
             <article key={meal.id} className="meal-card">
               <div>
                 <h3 className="meal-name">{meal.name}</h3>
-                <div className="meal-match">{getMealMatchPercent(meal)}% ingredient match</div>
+                <div className="meal-match-row">
+                  <div className="meal-match">{getMealMatchPercent(meal)}% ingredient match</div>
+                  <button
+                    type="button"
+                    className="member-expand-btn"
+                    onClick={() => toggleMealIngredients(meal.id)}
+                    aria-expanded={Boolean(expandedMeals[meal.id])}
+                    aria-controls={`meal-ingredients-${meal.id}`}
+                  >
+                    {expandedMeals[meal.id] ? "Hide ingredients" : "View ingredients"}
+                  </button>
+                </div>
               </div>
               <div className="meal-meta">Feeds: {meal.feeds}</div>
               <div className="meal-meta">Time: {meal.minutes} min</div>
               <div className="meal-actions">
                 <button type="button" className="meal-remove-btn" onClick={() => setConfirmRemoveMeal(meal)}>
-                  Remove
+                  Delete
                 </button>
               </div>
+              {expandedMeals[meal.id] && (
+                <div id={`meal-ingredients-${meal.id}`} className="meal-ingredients-panel">
+                  <div className="meal-ingredients-section">
+                    <h4>Ingredients</h4>
+                    <div className="member-chip-row">
+                      {meal.ingredients.length ? meal.ingredients.map((ingredient, index) => (
+                        <span key={`${meal.id}-${normalizeIngredient(ingredient)}-${index}`} className="member-chip">{ingredient}</span>
+                      )) : <span className="member-chip empty">None listed</span>}
+                    </div>
+                  </div>
+                </div>
+              )}
             </article>
           ))}
 
@@ -329,11 +362,11 @@ export default function MealsPage() {
       {confirmRemoveMeal && (
         <div className="modal-overlay" onClick={() => setConfirmRemoveMeal(null)}>
           <div className="item-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3>Remove Meal</h3>
-            <p style={{ margin: "0.75rem 0", color: "#2a6fa8" }}>Are you sure you want to remove <strong>{confirmRemoveMeal.name}</strong>?</p>
+            <h3>Delete Meal</h3>
+            <p style={{ margin: "0.75rem 0", color: "#2a6fa8" }}>Are you sure you want to delete <strong>{confirmRemoveMeal.name}</strong>?</p>
             <div className="item-modal-actions">
               <button type="button" className="modal-btn" onClick={() => setConfirmRemoveMeal(null)}>Cancel</button>
-              <button type="button" className="modal-btn delete" onClick={() => removeMeal(confirmRemoveMeal.id)}>Yes, Remove</button>
+              <button type="button" className="modal-btn delete" onClick={() => removeMeal(confirmRemoveMeal.id)}>Yes, Delete</button>
             </div>
           </div>
         </div>

@@ -238,8 +238,8 @@ export default function CollabPage() {
                 </div>
                 <div className="member-card-actions">
                   {!member.isYou && (
-                    <button type="button" onClick={() => setConfirmRemove(member)} className="member-remove-btn" aria-label={`Remove ${member.name}`}>
-                      Remove
+                    <button type="button" onClick={() => setConfirmRemove(member)} className="member-remove-btn" aria-label={`Delete ${member.name}`}>
+                      Delete
                     </button>
                   )}
                 </div>
@@ -336,11 +336,11 @@ export default function CollabPage() {
       {confirmRemove && (
         <div className="modal-overlay" onClick={() => setConfirmRemove(null)}>
           <div className="item-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3>Remove Member</h3>
-            <p style={{ margin: "0.75rem 0", color: "#6b7280" }}>Are you sure you want to remove <strong>{confirmRemove.name}</strong> from your group?</p>
+            <h3>Delete Member</h3>
+            <p style={{ margin: "0.75rem 0", color: "#6b7280" }}>Are you sure you want to delete <strong>{confirmRemove.name}</strong> from your group?</p>
             <div className="item-modal-actions">
               <button type="button" className="modal-btn" onClick={() => setConfirmRemove(null)}>Cancel</button>
-              <button type="button" className="modal-btn delete" onClick={() => removeMember(confirmRemove.id)}>Yes, Remove</button>
+              <button type="button" className="modal-btn delete" onClick={() => removeMember(confirmRemove.id)}>Yes, Delete</button>
             </div>
           </div>
         </div>

@@ -181,8 +181,8 @@ export default function InventoryPage() {
                       </span>
                     </button>
                     <div style={{ display: "flex", gap: "0.25rem" }}>
-                      <button type="button" className="item-menu-btn" aria-label={`Edit ${item.name}`} onClick={() => openItemModal(item)}>•••</button>
-                      <button type="button" aria-label={`Remove ${item.name}`} onClick={() => setQuickRemoveId(item.id)} style={{ background: "none", border: "none", color: "#c0392b", cursor: "pointer", fontSize: "1rem", fontWeight: 700, padding: "0 4px" }}>×</button>
+                      <button type="button" className="item-menu-btn" aria-label={`Edit ${item.name}`} onClick={() => openItemModal(item)}>Edit</button>
+                      <button type="button" className="item-menu-btn item-delete-btn" aria-label={`Delete ${item.name}`} onClick={() => setQuickRemoveId(item.id)}>Delete</button>
                     </div>
                   </li>
                 ))}
@@ -208,11 +208,11 @@ export default function InventoryPage() {
       {quickRemoveItem && (
         <div className="modal-overlay" onClick={() => setQuickRemoveId(null)}>
           <div className="item-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3>Remove Item</h3>
-            <p style={{ margin: "0.75rem 0", color: "#2a6fa8" }}>Are you sure you want to remove <strong>{quickRemoveItem.name}</strong>?</p>
+            <h3>Delete Item</h3>
+            <p style={{ margin: "0.75rem 0", color: "#2a6fa8" }}>Are you sure you want to delete <strong>{quickRemoveItem.name}</strong>?</p>
             <div className="item-modal-actions">
               <button type="button" className="modal-btn" onClick={() => setQuickRemoveId(null)}>Cancel</button>
-              <button type="button" className="modal-btn delete" onClick={() => removeItem(quickRemoveItem.id)}>Yes, Remove</button>
+              <button type="button" className="modal-btn delete" onClick={() => removeItem(quickRemoveItem.id)}>Yes, Delete</button>
             </div>
           </div>
         </div>

@@ -119,7 +119,7 @@ export default function HomePage() {
 
       {lastDeleted && (
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "0 0 0.75rem 0", padding: "0.4rem 0.75rem", background: "rgba(24, 111, 195, 0.1)", border: "1px solid rgba(24, 111, 195, 0.3)", borderRadius: "8px", fontSize: "0.85rem", color: "#155999" }}>
-          <span>{lastDeleted.value} removed.</span>
+          <span>{lastDeleted.value} deleted.</span>
           <button type="button" onClick={undoDelete} style={{ fontWeight: 600, textDecoration: "underline", background: "none", border: "none", color: "#155999", cursor: "pointer" }}>Undo</button>
         </div>
       )}

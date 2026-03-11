@@ -167,7 +167,7 @@ export default function ChoresPage() {
         </div>
         <div className="chore-assignment-row">
           <label className="chore-select-field">
-            Turn
+            Current Turn
             <select value={newTurn} onChange={(e) => {
               const selected = e.target.value;
               setNewTurn(selected);
@@ -177,7 +177,7 @@ export default function ChoresPage() {
             </select>
           </label>
           <label className="chore-select-field">
-            Previous
+            Previous Turn
             <select value={newPrev} onChange={(e) => {
               const selected = e.target.value;
               setNewPrev(selected);
@@ -220,11 +220,11 @@ export default function ChoresPage() {
             </div>
             <div className="chore-meta-row">
               <span className={`chore-meta-pill turn ${isCurrentUserTurn(chore.turn) ? "active" : ""}`}>
-                <span className="pill-label">Turn</span>
+                <span className="pill-label">Current Turn</span>
                 <strong>{formatLabel(chore.turn)}</strong>
               </span>
               <span className="chore-meta-pill prev">
-                <span className="pill-label">Previous</span>
+                <span className="pill-label">Previous Turn</span>
                 <strong>{formatLabel(chore.prev)}</strong>
               </span>
             </div>

@@ -633,9 +633,17 @@ select {
 
 .meal-match {
   color: #34546d;
-  margin-top: 0.2rem;
+  margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
+}
+
+.meal-match-row {
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
 }
 
 .meal-action {
@@ -664,6 +672,21 @@ select {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.meal-ingredients-panel {
+  grid-column: 1 / -1;
+  margin-top: 0.2rem;
+  padding-top: 0.58rem;
+  border-top: 1px solid rgba(24, 111, 195, 0.16);
+}
+
+.meal-ingredients-section h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(21, 89, 153, 0.8);
 }
 
 .meal-remove-btn {
@@ -783,15 +806,26 @@ select {
 }
 
 .item-menu-btn {
-  border: 1px solid rgba(24, 111, 195, 0.24);
-  background: rgba(196, 217, 237, 0.36);
-  color: var(--prep-blue-deep);
-  border-radius: 10px;
-  min-width: 42px;
+  border: 1px solid rgba(24, 111, 195, 0.2);
+  background: rgba(250, 252, 240, 0.95);
+  color: #000;
+  border-radius: 14px;
+  width: 64px;
   height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
-  font-size: 1.05rem;
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.item-delete-btn {
+  border-color: rgba(24, 111, 195, 0.2);
+  background: rgba(250, 252, 240, 0.95);
+  color: #000;
 }
 
 .inventory-item input {
